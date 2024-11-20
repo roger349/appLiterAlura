@@ -9,7 +9,7 @@ import org.hibernate.type.SqlTypes;
 public class autoresBd {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id", nullable = false,unique = true)
     @JdbcTypeCode(SqlTypes.INTEGER)
     private Integer id;
     @Column(name = "nombre_autor", nullable = false)
