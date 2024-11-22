@@ -17,7 +17,7 @@ public class Menu {
     LibroRepository libroRepo;
     @Autowired
     AutorRepository autorRepo;
-    public void menuOpciones() throws Exception {
+    public void menuOpciones() {
         boolean salir = false;
         while(!salir){
                         System.out.println("=============" + "\n" +
@@ -74,11 +74,19 @@ public class Menu {
                 float numeroDescargas=da.resultados().get(0).numero_descargas();
                 LibrosBd librosBd = new LibrosBd(tituloLibroapi,autor,idioma,numeroDescargas);
                 autoresBd autorBd=new autoresBd(autor,añoNac,añoFall);
-                libroRepo.save(librosBd);
-                autorRepo.save(autorBd);
-                System.out.println("titulo: " + tituloLibroapi + "; autor: " + autor + "; idioma: " + idioma +
-                                   "; numero de descargas: " + numeroDescargas);
-                System.out.println("autor: " + autor + "; año nacimiento: " + añoNac + "; año fallecimiento: " + añoFall);
+                if (!libroRepo.existsByTitulo(tituloLibroapi)) {
+                            libroRepo.save(librosBd);
+                            autorRepo.save(autorBd);
+                    System.out.println("Libro guardado");
+                    System.out.println("titulo: " + tituloLibroapi + "; autor: " + autor + "; idioma: " + idioma +
+                            "; numero de descargas: " + numeroDescargas);
+                    System.out.println("autor: " + autor + "; año nacimiento: " + añoNac + "; año fallecimiento: "
+                                       + añoFall);
+
+                } else {
+                    System.out.println("El libro ya existe");
+                }
+
             } else {
                 System.out.println("No se encontraron resultados");
             }

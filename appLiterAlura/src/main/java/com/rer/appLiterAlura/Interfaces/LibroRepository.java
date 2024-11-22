@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface LibroRepository extends JpaRepository<LibrosBd, Integer> {
-
+    boolean existsByTitulo(String titulo);
 }
 
 
