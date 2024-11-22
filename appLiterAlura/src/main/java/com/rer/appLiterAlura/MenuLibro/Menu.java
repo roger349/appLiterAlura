@@ -8,6 +8,9 @@ import com.rer.appLiterAlura.Model.datosApi;
 import com.rer.appLiterAlura.Services.serviciosApiG;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 @Component
@@ -35,10 +38,10 @@ public class Menu {
                         buscarLibro();
                         break;
                     case 2:
-                        System.out.println("salida 2");
+                        listarLibros();
                         break;
                     case 3:
-                        System.out.println("salida 3");
+                        listarAutores();
                         break;
                     case 4:
                         System.out.println("salida 4");
@@ -92,6 +95,22 @@ public class Menu {
             }
         } catch (Exception e) {
             System.out.println("Error al buscar libro: " + e.getMessage());
+        }
+    }
+    public void listarLibros() {
+            List<LibrosBd> librosBd = libroRepo.findAllLibros();
+            for (int i = 0; i < librosBd.size(); i++) {
+            System.out.println("titulo: " + librosBd.get(i).getTitulo()  +  " ;  autor: " + librosBd.get(i).getAutor() +
+                                        " ; idioma:  " + librosBd.get(i).getIdioma() +  " ; numero de descargas: "
+                                        + librosBd.get(i).getNumero_descarga());
+        }
+    }
+    public void listarAutores() {
+        List<autoresBd> autoresBd = autorRepo.findAllAutores();
+        for (int i = 0; i < autoresBd.size(); i++) {
+            System.out.println("autor: " + autoresBd.get(i).getNombre_autor()  +  " ;  año nacimiento: " +
+                               autoresBd.get(i).getAño_nacimiento() + " ; año fallecimiento: " +
+                               autoresBd.get(i).getAño_fallecimiento());
         }
     }
 }
