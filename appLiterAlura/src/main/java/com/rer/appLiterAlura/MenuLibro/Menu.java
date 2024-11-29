@@ -8,6 +8,7 @@ import com.rer.appLiterAlura.Model.datosApi;
 import com.rer.appLiterAlura.Services.serviciosApiG;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,14 +24,14 @@ public class Menu {
     public void menuOpciones() {
         boolean salir = false;
         while(!salir){
-                        System.out.println("=============" + "\n" +
-                        "Elige una opción:\n" +
-                        "1.- Buscar libro por titulo" + "\n" +
+                        System.out.println("=========" + "\n" +
+                        "Elige una opción:                \n" +
+                        "1.- Buscar libro por titulo" +  "\n" +
                         "2.- Listar libros registrados    \n" +
                         "3.- Listar autores registrados   \n" +
                         "4.- Listar autores vivos por año \n" +
                         "5.- Listar libros por idioma     \n" +
-                        "0.- Salir\n=============");
+                        "0.- Salir\n=========");
 
                 int opcion= Integer.parseInt(sc.nextLine());
                 switch(opcion){
@@ -44,10 +45,10 @@ public class Menu {
                         listarAutores();
                         break;
                     case 4:
-                        System.out.println("salida 4");
+                        listarAutoresVivos();
                         break;
                     case 5:
-                        System.out.println("salida 5");
+                        listarLibrosPorIdioma();
                         break;
                     case 0:
                         salir = true;
@@ -94,23 +95,56 @@ public class Menu {
                 System.out.println("No se encontraron resultados");
             }
         } catch (Exception e) {
-            System.out.println("Error al buscar libro: " + e.getMessage());
+            System.out.println("Error al buscar libro ");
         }
     }
     public void listarLibros() {
+            boolean b=true;
             List<LibrosBd> librosBd = libroRepo.findAllLibros();
-            for (int i = 0; i < librosBd.size(); i++) {
-            System.out.println("titulo: " + librosBd.get(i).getTitulo()  +  " ;  autor: " + librosBd.get(i).getAutor() +
-                                        " ; idioma:  " + librosBd.get(i).getIdioma() +  " ; numero de descargas: "
-                                        + librosBd.get(i).getNumero_descarga());
+            for (LibrosBd libro : librosBd) {
+                if(b){
+                    System.out.println("Libros Registrados por Titulo: \t");
+                    b=false;
+                }
+                int nd= (int) libro.getNumero_descarga();
+                System.out.printf("%s\n",libro.getTitulo());
         }
     }
     public void listarAutores() {
+        boolean b=true;
         List<autoresBd> autoresBd = autorRepo.findAllAutores();
-        for (int i = 0; i < autoresBd.size(); i++) {
-            System.out.println("autor: " + autoresBd.get(i).getNombre_autor()  +  " ;  año nacimiento: " +
-                               autoresBd.get(i).getAño_nacimiento() + " ; año fallecimiento: " +
-                               autoresBd.get(i).getAño_fallecimiento());
+        for (autoresBd autor : autoresBd) {
+            if(b){
+                System.out.println("Libros Registrados por Autor: \t");
+                b=false;
+            }
+            System.out.printf("%s\n",autor.getNombre_autor());
+        }
+    }
+    public void listarAutoresVivos() {
+        System.out.println("Ingrese el año: ");
+        Integer año = Integer.valueOf(sc.nextLine());
+        boolean b=true;
+        List<autoresBd> autoresBd = autorRepo.findbyAño(año);
+        for (autoresBd autor : autoresBd) {
+            if(b){
+                System.out.println("Libros Registrados por Autores vivos en un determinado año: \t");
+                b=false;
+            }
+            System.out.printf("%s\n",autor.getNombre_autor());
+        }
+    }
+    public void listarLibrosPorIdioma(){
+        System.out.println("Ingrese el idioma: ");
+        String idioma = sc.nextLine();
+        boolean b=true;
+        List<LibrosBd> librosBd = libroRepo.findByIdioma(idioma);
+        for (LibrosBd libro : librosBd) {
+            if(b){
+                System.out.println("Listado de libros por idioma: \t");
+                b=false;
+            }
+            System.out.println("Titulo: " + libro.getTitulo()  +  "      Idioma:" + libro.getIdioma());
         }
     }
 }

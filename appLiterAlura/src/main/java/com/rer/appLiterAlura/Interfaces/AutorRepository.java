@@ -10,14 +10,8 @@ public interface AutorRepository extends JpaRepository<autoresBd, Integer> {
 
     @Query("SELECT a FROM autoresBd a")
     List<autoresBd> findAllAutores();
+    @Query("select a from autoresBd a where :año >= a.año_nacimiento and :año <= a.año_fallecimiento")
+    List<autoresBd> findbyAño(Integer año);
 
-   /* @Query("select a from Author a where  a.birth_year<=:year and a.death_year>=:year")
-    List<autoresBd> findbyFecha(Integer year);
-    @Query("select a from Author a where a.author_name ilike %:author_name%")
-    List<autoresBd> findautorbyNombre_autor(String nombre_autor);
-    @Query("select a from Author a where a.birth_year=:year")
-    List<autoresBd> findautorbyAño_nacimiento(Integer year);
-    @Query("select a from Author a where a.año_fallecimiento=:año")
-    List<autoresBd> findautorbyAño_fallecimiento(Integer year);*/
 }
 
