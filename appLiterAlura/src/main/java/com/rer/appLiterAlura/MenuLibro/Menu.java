@@ -8,11 +8,10 @@ import com.rer.appLiterAlura.Model.datosApi;
 import com.rer.appLiterAlura.Services.serviciosApiG;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+
 
 @Component
 public class Menu {
@@ -24,13 +23,17 @@ public class Menu {
     public void menuOpciones() {
         boolean salir = false;
         while(!salir){
-                        System.out.println("=========" + "\n" +
-                        "Elige una opción:                \n" +
-                        "1.- Buscar libro por titulo" +  "\n" +
-                        "2.- Listar libros registrados    \n" +
-                        "3.- Listar autores registrados   \n" +
-                        "4.- Listar autores vivos por año \n" +
-                        "5.- Listar libros por idioma     \n" +
+                        System.out.println("=========" +         "\n" +
+                        "Elige una opción:                        \n" +
+                        "1:  Buscar libro por titulo              \n" +
+                        "2:  Listar libros registrados            \n" +
+                        "3:  Listar autores registrados           \n" +
+                        "4:  Listar autores vivos por año         \n" +
+                        "5:  Listar libros por idioma             \n" +
+                        "6:  Listar top 10 libros mas descargados \n" +
+                        "7:  Listar autores por nombre            \n" +
+                        "8:  Listar libros mas buscados           \n" +
+                        "9:  otras consultas                      \n" +
                         "0.- Salir\n=========");
 
                 int opcion= Integer.parseInt(sc.nextLine());
@@ -49,6 +52,9 @@ public class Menu {
                         break;
                     case 5:
                         listarLibrosPorIdioma();
+                        break;
+                    case 6:
+                        listarTop10();
                         break;
                     case 0:
                         salir = true;
@@ -147,4 +153,12 @@ public class Menu {
             System.out.println("Titulo: " + libro.getTitulo()  +  "      Idioma:" + libro.getIdioma());
         }
     }
+    public void listarTop10(){
+        List<LibrosBd> librosBd=libroRepo.findAllLibros();
+        librosBd.stream().sorted(Comparator.comparing(LibrosBd::getNumero_descarga).reversed())
+                .forEach(libro -> System.out.println("Título: " + libro.getTitulo() + ", Descargas: "
+                        + libro.getNumero_descarga()));
+
+    }
 }
+
