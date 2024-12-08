@@ -17,5 +17,6 @@ public class AppLiterAluraApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
             menu.menuOpciones();
     }
+
 }
 

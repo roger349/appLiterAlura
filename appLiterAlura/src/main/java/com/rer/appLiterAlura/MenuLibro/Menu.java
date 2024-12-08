@@ -56,6 +56,9 @@ public class Menu {
                     case 6:
                         listarTop10();
                         break;
+                    case 7:
+                        listarAutorPorNombre();
+                        break;
                     case 0:
                         salir = true;
                         System.out.println("salida 0");
@@ -85,13 +88,19 @@ public class Menu {
                 LibrosBd librosBd = new LibrosBd(tituloLibroapi,autor,idioma,numeroDescargas);
                 autoresBd autorBd=new autoresBd(autor,añoNac,añoFall);
                 if (!libroRepo.existsByTitulo(tituloLibroapi)) {
-                            libroRepo.save(librosBd);
-                            autorRepo.save(autorBd);
+                    libroRepo.save(librosBd);
                     System.out.println("Libro guardado");
-                    System.out.println("titulo: " + tituloLibroapi + "; autor: " + autor + "; idioma: " + idioma +
-                            "; numero de descargas: " + numeroDescargas);
-                    System.out.println("autor: " + autor + "; año nacimiento: " + añoNac + "; año fallecimiento: "
-                                       + añoFall);
+                    System.out.println("titulo: " + tituloLibroapi + "; autor: " + autor + "; idioma: "
+                            + idioma + "; numero de descargas: " + numeroDescargas);
+                    if (autorRepo.existsByNombreAutor(autor)){
+                        autorRepo.save(autorBd);
+                        System.out.println("autor guardado");
+                        System.out.println("autor: " + autor + "; año nacimiento: " + añoNac
+                                + "; año fallecimiento: "  + añoFall);
+                    }
+                    else{
+                        System.out.println("El autor ya existe");
+                    }
 
                 } else {
                     System.out.println("El libro ya existe");
@@ -155,10 +164,24 @@ public class Menu {
     }
     public void listarTop10(){
         List<LibrosBd> librosBd=libroRepo.findAllLibros();
-        librosBd.stream().sorted(Comparator.comparing(LibrosBd::getNumero_descarga).reversed())
+        librosBd.stream().sorted(Comparator.comparing(LibrosBd::getNumero_descarga).reversed()).limit(10)
                 .forEach(libro -> System.out.println("Título: " + libro.getTitulo() + ", Descargas: "
                         + libro.getNumero_descarga()));
 
+    }
+    public void listarAutorPorNombre(){
+        System.out.println("Ingrese el nombre del autor: ");
+        String nombre = sc.nextLine();
+        boolean b=true;
+        List<LibrosBd> libroBd = libroRepo.findByAutor(nombre);
+        for (LibrosBd libro : libroBd) {
+            if(b){
+                System.out.println("Listado de libros del autor: " + libro.getAutor() + "\t");
+                System.out.println("Titulos: \t");
+                b=false;
+            }
+            System.out.println(libro.getTitulo());
+        }
     }
 }
 

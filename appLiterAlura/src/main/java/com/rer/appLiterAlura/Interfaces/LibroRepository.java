@@ -16,6 +16,8 @@ public interface LibroRepository extends JpaRepository<LibrosBd, Integer> {
     @Query("select i from LibrosBd i where i.idioma = :idioma")
     List<LibrosBd> findByIdioma(String idioma);
     // @Query("select l from LibrosBd l order by l.numero_descargas desc limit 10")
+    @Query("select l from LibrosBd l where l.autor ilike %:nombre%")
+    List<LibrosBd> findByAutor(String nombre);
 }
 
 
