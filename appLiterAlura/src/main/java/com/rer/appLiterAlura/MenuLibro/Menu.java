@@ -61,7 +61,6 @@ public class Menu {
                         break;
                     case 0:
                         salir = true;
-                        System.out.println("salida 0");
                         break;
                     default:
                         System.out.println("Número Invalido");
@@ -150,16 +149,32 @@ public class Menu {
         }
     }
     public void listarLibrosPorIdioma(){
-        System.out.println("Ingrese el idioma: ");
-        String idioma = sc.nextLine();
-        boolean b=true;
-        List<LibrosBd> librosBd = libroRepo.findByIdioma(idioma);
-        for (LibrosBd libro : librosBd) {
-            if(b){
-                System.out.println("Listado de libros por idioma: \t");
-                b=false;
+        boolean salir = false;
+        while(!salir) {
+            System.out.println("Elige una opción: \n" +
+                    "en: ingles                   \n" +
+                    "fr: frances                  \n" +
+                    "es: español                  \n" +
+                    "s : volver menu principal");
+            String opcion = sc.nextLine();
+            if(!"s".equals(opcion)) {
+                List<LibrosBd> librosBd = libroRepo.findByIdioma(opcion);
+                boolean b = true;
+                if (!librosBd.isEmpty()) {
+                    for (LibrosBd libro : librosBd) {
+                        if (b) {
+                            System.out.println("Listado de libros por idioma: \t");
+                            b = false;
+                        }
+                        System.out.println("Titulo: " + libro.getTitulo() + "      Idioma:" + libro.getIdioma());
+                    }
+                } else {
+                    System.out.println("Idioma no disponible");
+                }
             }
-            System.out.println("Titulo: " + libro.getTitulo()  +  "      Idioma:" + libro.getIdioma());
+            else{
+               salir=true;
+            }
         }
     }
     public void listarTop10(){
