@@ -31,9 +31,8 @@ public class Menu {
                         "4:  Listar autores vivos por año         \n" +
                         "5:  Listar libros por idioma             \n" +
                         "6:  Listar top 10 libros mas descargados \n" +
-                        "7:  Listar autores por nombre            \n" +
-                        "8:  Listar libros mas buscados           \n" +
-                        "9:  otras consultas                      \n" +
+                        "7:  Listar libros por nombre de autor    \n" +
+                        "8:  otras consultas                      \n" +
                         "0.- Salir\n=========");
 
                 int opcion= Integer.parseInt(sc.nextLine());
@@ -136,16 +135,29 @@ public class Menu {
         }
     }
     public void listarAutoresVivos() {
-        System.out.println("Ingrese el año: ");
-        Integer año = Integer.valueOf(sc.nextLine());
-        boolean b=true;
-        List<autoresBd> autoresBd = autorRepo.findbyAño(año);
-        for (autoresBd autor : autoresBd) {
-            if(b){
-                System.out.println("Libros Registrados por Autores vivos en un determinado año: \t");
-                b=false;
+        boolean salir = false;
+        while(!salir) {
+            System.out.println("Ingrese el año(s:volver al menu principal): ");
+            String opcion=sc.nextLine();
+            if(!"s".equals(opcion)) {
+                Integer año = Integer.valueOf(opcion);
+                boolean b = true;
+                List<autoresBd> autoresBd = autorRepo.findbyAño(año);
+                if (!autoresBd.isEmpty()) {
+                    for (autoresBd autor : autoresBd) {
+                        if (b) {
+                            System.out.println("Libros Registrados por Autores vivos en un determinado año: \t");
+                            b = false;
+                        }
+                        System.out.printf("%s\n", autor.getNombre_autor());
+                    }
+                } else {
+                    System.out.println("Año sin resultados");
+                }
             }
-            System.out.printf("%s\n",autor.getNombre_autor());
+            else {
+                salir=true;
+            }
         }
     }
     public void listarLibrosPorIdioma(){
@@ -185,17 +197,29 @@ public class Menu {
 
     }
     public void listarAutorPorNombre(){
-        System.out.println("Ingrese el nombre del autor: ");
-        String nombre = sc.nextLine();
-        boolean b=true;
-        List<LibrosBd> libroBd = libroRepo.findByAutor(nombre);
-        for (LibrosBd libro : libroBd) {
-            if(b){
-                System.out.println("Listado de libros del autor: " + libro.getAutor() + "\t");
-                System.out.println("Titulos: \t");
-                b=false;
+        boolean salir = false;
+        while(!salir) {
+            System.out.println("Ingrese el nombre del autor(s:volver al menu principal):  ");
+            String opcion = sc.nextLine();
+            if(!"s".equals(opcion)) {
+                boolean b = true;
+                List<LibrosBd> libroBd = libroRepo.findByAutor(opcion);
+                if (!libroBd.isEmpty()) {
+                    for (LibrosBd libro : libroBd) {
+                        if (b) {
+                            System.out.println("Listado de libros del autor: " + libro.getAutor() + "\t");
+                            System.out.println("Titulos: \t");
+                            b = false;
+                        }
+                        System.out.println(libro.getTitulo());
+                    }
+                } else {
+                    System.out.println("Autor no disponible");
+                  }
             }
-            System.out.println(libro.getTitulo());
+            else {
+                salir=true;
+            }
         }
     }
 }
