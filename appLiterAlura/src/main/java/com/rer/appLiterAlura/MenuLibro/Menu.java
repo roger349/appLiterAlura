@@ -8,9 +8,9 @@ import com.rer.appLiterAlura.Model.datosApi;
 import com.rer.appLiterAlura.Services.serviciosApiG;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -57,6 +57,9 @@ public class Menu {
                         break;
                     case 7:
                         listarAutorPorNombre();
+                        break;
+                    case 8:
+                        otrasConsultas();
                         break;
                     case 0:
                         salir = true;
@@ -219,6 +222,45 @@ public class Menu {
             }
             else {
                 salir=true;
+            }
+        }
+    }
+    public void otrasConsultas(){
+        boolean salir = false;
+        while(!salir) {
+            System.out.println("Elige una opción:       \n" +
+                    "1: promedio de libros descargados  \n" +
+                    "2: libro mas leido                 \n" +
+                    "3: libro menos leido               \n" +
+                    "s: volver menu principal            ");
+            String opcion = sc.nextLine();
+            if(!"s".equals(opcion)){
+                List<LibrosBd> libroBd = libroRepo.findAllLibros();
+                if (!libroBd.isEmpty()) {
+                    if("1".equals(opcion)){
+                        Double promedio = libroBd.stream().collect(Collectors
+                                          .averagingDouble(LibrosBd::getNumero_descarga));
+                        System.out.println("Promedio de libros descargados: " + promedio);
+                    }
+                    if("2".equals(opcion)){
+                        Optional<LibrosBd> libroMenosLeido = libroBd.stream()
+                                .filter(libro -> libro.getNumero_descarga() != 0.0)
+                                .max(Comparator.comparingDouble(LibrosBd::getNumero_descarga));
+                            System.out.println("El libro mas leído es: " + libroMenosLeido.get().getTitulo());
+                    }
+                    if("3".equals(opcion)){
+                        Optional<LibrosBd> libroMenosLeido = libroBd.stream()
+                                .filter(libro -> libro.getNumero_descarga() != 0.0)
+                                .min(Comparator.comparingDouble(LibrosBd::getNumero_descarga));
+                        System.out.println("El libro menos leído es: " + libroMenosLeido.get().getTitulo());
+                    }
+                }
+                else{
+                    System.out.println("Busqueda sin resultados");
+                }
+            }
+            else {
+               salir=true;
             }
         }
     }
