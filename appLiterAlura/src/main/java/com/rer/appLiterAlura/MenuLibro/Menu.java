@@ -71,47 +71,58 @@ public class Menu {
         }
     }
     public void buscarLibro() {
+        boolean salir = false;
+        while(!salir) {
 
-        System.out.println("Ingrese titulo del libro: ");
-        String titulo = sc.nextLine().toUpperCase().replace(" ", "%20");
+            System.out.println("Elige una opción:            \n" +
+                    "1: ingresar titulo para buscar el libro \n" +
+                    "s: volver menu principal                ");
+            String opcion=sc.nextLine();
 
-        try {
-            serviciosApiG serv = new serviciosApiG();
-            datosApi da = serv.buscarLibApi(titulo);
+          if(!"s".equals(opcion)) {
+              System.out.println("Ingrese el titulo del libro: ");
+              String titulo = sc.nextLine().toUpperCase().replace(" ", "%20");
+              try {
+                  serviciosApiG serv = new serviciosApiG();
+                  datosApi da = serv.buscarLibApi(titulo);
 
-            if (da.resultados() != null && !da.resultados().isEmpty()) {
-                String tituloLibroapi=da.resultados().get(0).titulo();
-                String autor =da.resultados().get(0).autor().get(0).nombre();
-                Integer añoNac =da.resultados().get(0).autor().get(0).año_nacimiento();
-                Integer añoFall =da.resultados().get(0).autor().get(0).año_fallecimiento();
-                String idioma = da.resultados().get(0).idiomas().get(0);
-                float numeroDescargas=da.resultados().get(0).numero_descargas();
-                LibrosBd librosBd = new LibrosBd(tituloLibroapi,autor,idioma,numeroDescargas);
-                autoresBd autorBd=new autoresBd(autor,añoNac,añoFall);
-                if (!libroRepo.existsByTitulo(tituloLibroapi)) {
-                    libroRepo.save(librosBd);
-                    System.out.println("Libro guardado");
-                    System.out.println("titulo: " + tituloLibroapi + "; autor: " + autor + "; idioma: "
-                            + idioma + "; numero de descargas: " + numeroDescargas);
-                    if (autorRepo.existsByNombreAutor(autor)){
-                        autorRepo.save(autorBd);
-                        System.out.println("autor guardado");
-                        System.out.println("autor: " + autor + "; año nacimiento: " + añoNac
-                                + "; año fallecimiento: "  + añoFall);
-                    }
-                    else{
-                        System.out.println("El autor ya existe");
-                    }
+                  if (da.resultados() != null && !da.resultados().isEmpty()) {
+                      String tituloLibroapi = da.resultados().get(0).titulo();
+                      String autor = da.resultados().get(0).autor().get(0).nombre();
+                      Integer añoNac = da.resultados().get(0).autor().get(0).año_nacimiento();
+                      Integer añoFall = da.resultados().get(0).autor().get(0).año_fallecimiento();
+                      String idioma = da.resultados().get(0).idiomas().get(0);
+                      float numeroDescargas = da.resultados().get(0).numero_descargas();
+                      LibrosBd librosBd = new LibrosBd(tituloLibroapi, autor, idioma, numeroDescargas);
+                      autoresBd autorBd = new autoresBd(autor, añoNac, añoFall);
+                      if (!libroRepo.existsByTitulo(tituloLibroapi)) {
+                          libroRepo.save(librosBd);
+                          System.out.println("Libro guardado");
+                          System.out.println("titulo: " + tituloLibroapi + "; autor: " + autor + "; idioma: "
+                                  + idioma + "; numero de descargas: " + numeroDescargas);
+                          if (autorRepo.existsByNombreAutor(autor)) {
+                              autorRepo.save(autorBd);
+                              System.out.println("autor guardado");
+                              System.out.println("autor: " + autor + "; año nacimiento: " + añoNac
+                                      + "; año fallecimiento: " + añoFall);
+                          } else {
+                              System.out.println("El autor ya existe");
+                          }
 
-                } else {
-                    System.out.println("El libro ya existe");
-                }
+                      } else {
+                          System.out.println("El libro ya existe");
+                      }
 
-            } else {
-                System.out.println("No se encontraron resultados");
-            }
-        } catch (Exception e) {
-            System.out.println("Error al buscar libro ");
+                  } else {
+                      System.out.println("No se encontraron resultados");
+                  }
+              } catch (Exception e) {
+                  System.out.println("Error al buscar libro ");
+              }
+          }
+          else {
+              salir=true;
+          }
         }
     }
     public void listarLibros() {
