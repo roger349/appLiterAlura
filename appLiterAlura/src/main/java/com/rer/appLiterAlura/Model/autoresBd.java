@@ -3,6 +3,8 @@ package com.rer.appLiterAlura.Model;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="autoresBd")
@@ -11,13 +13,15 @@ public class autoresBd {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false,unique = true)
     @JdbcTypeCode(SqlTypes.INTEGER)
-    private Integer id;
+    public Integer id;
     @Column(name = "nombre_autor", nullable = false)
-    private String nombre_autor;
+    public String nombre_autor;
     @Column(name = "año_nacimiento", nullable = true)
-    private int año_nacimiento;
+    public int año_nacimiento;
     @Column(name = "año_fallecimiento", nullable = true)
-    private int año_fallecimiento;
+    public int año_fallecimiento;
+    @OneToMany(mappedBy = "autor_libro",cascade = CascadeType.PERSIST)
+    public List<LibrosBd> libros = new ArrayList<>();
 
     public autoresBd() {
     }
@@ -50,4 +54,6 @@ public class autoresBd {
     public void setAño_fallecimiento(int año_fallecimiento) {
         this.año_fallecimiento = año_fallecimiento;
     }
+    public List<LibrosBd> getLibros() {return libros;}
+    public void setLibros(List<LibrosBd> libros) {this.libros = libros;}
 }

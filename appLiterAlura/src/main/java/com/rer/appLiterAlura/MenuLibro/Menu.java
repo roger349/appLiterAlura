@@ -8,10 +8,8 @@ import com.rer.appLiterAlura.Model.datosApi;
 import com.rer.appLiterAlura.Services.serviciosApiG;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.util.*;
 import java.util.stream.Collectors;
-
 
 @Component
 public class Menu {
@@ -56,7 +54,7 @@ public class Menu {
                         listarTop10();
                         break;
                     case 7:
-                        listarAutorPorNombre();
+                        listarLibrosPorNombreAutor();
                         break;
                     case 8:
                         otrasConsultas();
@@ -95,25 +93,27 @@ public class Menu {
                       float numeroDescargas = da.resultados().get(0).numero_descargas();
                       LibrosBd librosBd = new LibrosBd(tituloLibroapi, autor, idioma, numeroDescargas);
                       autoresBd autorBd = new autoresBd(autor, añoNac, añoFall);
+                      librosBd.setAutor_libro(autorBd);
                       if (!libroRepo.existsByTitulo(tituloLibroapi)) {
-                          libroRepo.save(librosBd);
-                          System.out.println("Libro guardado");
-                          System.out.println("titulo: " + tituloLibroapi + "; autor: " + autor + "; idioma: "
-                                  + idioma + "; numero de descargas: " + numeroDescargas);
-                          if (autorRepo.existsByNombreAutor(autor)) {
+                            if (!autorRepo.existsByNombreAutor(autor)) {
                               autorRepo.save(autorBd);
                               System.out.println("autor guardado");
                               System.out.println("autor: " + autor + "; año nacimiento: " + añoNac
                                       + "; año fallecimiento: " + añoFall);
-                          } else {
+                            }
+                            else {
                               System.out.println("El autor ya existe");
-                          }
-
-                      } else {
+                            }
+                       libroRepo.save(librosBd);
+                       System.out.println("Libro guardado");
+                       System.out.println("titulo: " + tituloLibroapi + "; autor: " + autor + "; idioma: "
+                                  + idioma + "; numero de descargas: " + numeroDescargas);
+                      }
+                      else {
                           System.out.println("El libro ya existe");
                       }
-
-                  } else {
+                  }
+                  else {
                       System.out.println("No se encontraron resultados");
                   }
               } catch (Exception e) {
@@ -151,10 +151,14 @@ public class Menu {
     public void listarAutoresVivos() {
         boolean salir = false;
         while(!salir) {
-            System.out.println("Ingrese el año(s:volver al menu principal): ");
+            System.out.println("Elige una opción:            \n" +
+                    "1: ingresar el año:                     \n" +
+                    "s: volver menu principal                ");
             String opcion=sc.nextLine();
             if(!"s".equals(opcion)) {
-                Integer año = Integer.valueOf(opcion);
+                System.out.println("ingrese el año: ");
+                String op=sc.nextLine();
+                Integer año = Integer.valueOf(op);
                 boolean b = true;
                 List<autoresBd> autoresBd = autorRepo.findbyAño(año);
                 if (!autoresBd.isEmpty()) {
@@ -210,29 +214,36 @@ public class Menu {
                         + libro.getNumero_descarga()));
 
     }
-    public void listarAutorPorNombre(){
+    public void listarLibrosPorNombreAutor(){
         boolean salir = false;
         while(!salir) {
-            System.out.println("Ingrese el nombre del autor(s:volver al menu principal):  ");
+            System.out.println("Elige una opción:            \n" +
+                    "1: ingresar el nombre del autor          \n" +
+                    "s: volver menu principal                ");
             String opcion = sc.nextLine();
-            if(!"s".equals(opcion)) {
-                boolean b = true;
-                List<LibrosBd> libroBd = libroRepo.findByAutor(opcion);
-                if (!libroBd.isEmpty()) {
-                    for (LibrosBd libro : libroBd) {
-                        if (b) {
-                            System.out.println("Listado de libros del autor: " + libro.getAutor() + "\t");
-                            System.out.println("Titulos: \t");
-                            b = false;
+            if (!"s".equals(opcion)) {
+                System.out.println("ingrese el nombre del autor: ");
+                String nombre=sc.nextLine();
+                List<autoresBd> autores = autorRepo.findByNombre_autor(nombre);
+                if (!autores.isEmpty()) {
+                    for (autoresBd autor : autores) {
+                        List<LibrosBd> libros = autor.getLibros();
+                        if (!libros.isEmpty()) {
+                            System.out.println("Libros del autor " + autor.getNombre_autor() + ":");
+                            for (LibrosBd libro : libros) {
+                                System.out.println(libro.getTitulo());
+                            }
                         }
-                        System.out.println(libro.getTitulo());
+                        else {
+                            System.out.println("No se encontraron libros del autor " + opcion);
+                        }
                     }
-                } else {
-                    System.out.println("Autor no disponible");
-                  }
-            }
-            else {
-                salir=true;
+                }
+                else {
+                    System.out.println("No se encontraron autores con el nombre " + opcion);
+                }
+            } else {
+                salir = true;
             }
         }
     }
