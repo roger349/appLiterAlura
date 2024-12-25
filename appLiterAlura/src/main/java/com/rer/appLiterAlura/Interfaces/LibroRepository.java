@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface LibroRepository extends JpaRepository<LibrosBd, Integer> {
+    @Query("select exists (select 1 from LibrosBd where titulo = :titulo)")
     boolean existsByTitulo(String titulo);
     @Query("select a from LibrosBd a")
     List<LibrosBd> findAllLibros();

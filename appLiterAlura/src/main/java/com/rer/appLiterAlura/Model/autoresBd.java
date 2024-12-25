@@ -14,7 +14,7 @@ public class autoresBd {
     @Column(name = "id", nullable = false,unique = true)
     @JdbcTypeCode(SqlTypes.INTEGER)
     public Integer id;
-    @Column(name = "nombre_autor", nullable = false)
+    @Column(name = "nombre_autor", nullable = false,unique = true)
     public String nombre_autor;
     @Column(name = "año_nacimiento", nullable = true)
     public int año_nacimiento;

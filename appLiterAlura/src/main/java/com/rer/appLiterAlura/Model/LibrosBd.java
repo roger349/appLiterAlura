@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.util.Objects;
-
 @Entity
 @Table(name="LibrosBd")
 public class LibrosBd {
@@ -14,7 +12,7 @@ public class LibrosBd {
     @Column(name = "id", nullable = false)
     @JdbcTypeCode(SqlTypes.FLOAT)
     public Integer id;
-    @Column(name = "titulo", nullable = false)
+    @Column(name = "titulo", nullable = false, unique = true)
     public String titulo;
     @Column(name = "autor", nullable = false)
     public String autor;
@@ -22,14 +20,14 @@ public class LibrosBd {
     public String idioma;
     @Column(name = "numero_descarga", nullable = false)
     public float numero_descarga;
-    @ManyToOne
+    @ManyToOne//(cascade = CascadeType.PERSIST)
     @JoinColumn(name="autor_libro_id")
     public autoresBd autor_libro;
 
     public LibrosBd() {
     }
     public LibrosBd(String titulo, String autor, String idioma, float numero_descarga) {
-        this.id = id;
+
         this.titulo = titulo;
         this.autor = autor;
         this.idioma = idioma;

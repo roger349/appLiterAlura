@@ -71,53 +71,58 @@ public class Menu {
     public void buscarLibro() {
         boolean salir = false;
         while(!salir) {
-
             System.out.println("Elige una opción:            \n" +
                     "1: ingresar titulo para buscar el libro \n" +
                     "s: volver menu principal                ");
             String opcion=sc.nextLine();
 
           if(!"s".equals(opcion)) {
-              System.out.println("Ingrese el titulo del libro: ");
-              String titulo = sc.nextLine().toUpperCase().replace(" ", "%20");
-              try {
-                  serviciosApiG serv = new serviciosApiG();
-                  datosApi da = serv.buscarLibApi(titulo);
 
-                  if (da.resultados() != null && !da.resultados().isEmpty()) {
-                      String tituloLibroapi = da.resultados().get(0).titulo();
-                      String autor = da.resultados().get(0).autor().get(0).nombre();
-                      Integer añoNac = da.resultados().get(0).autor().get(0).año_nacimiento();
-                      Integer añoFall = da.resultados().get(0).autor().get(0).año_fallecimiento();
-                      String idioma = da.resultados().get(0).idiomas().get(0);
-                      float numeroDescargas = da.resultados().get(0).numero_descargas();
-                      LibrosBd librosBd = new LibrosBd(tituloLibroapi, autor, idioma, numeroDescargas);
-                      autoresBd autorBd = new autoresBd(autor, añoNac, añoFall);
-                      librosBd.setAutor_libro(autorBd);
-                      if (!libroRepo.existsByTitulo(tituloLibroapi)) {
-                            if (!autorRepo.existsByNombreAutor(autor)) {
-                              autorRepo.save(autorBd);
-                              System.out.println("autor guardado");
-                              System.out.println("autor: " + autor + "; año nacimiento: " + añoNac
-                                      + "; año fallecimiento: " + añoFall);
-                            }
-                            else {
-                              System.out.println("El autor ya existe");
-                            }
-                       libroRepo.save(librosBd);
-                       System.out.println("Libro guardado");
-                       System.out.println("titulo: " + tituloLibroapi + "; autor: " + autor + "; idioma: "
-                                  + idioma + "; numero de descargas: " + numeroDescargas);
-                      }
-                      else {
-                          System.out.println("El libro ya existe");
-                      }
-                  }
-                  else {
-                      System.out.println("No se encontraron resultados");
-                  }
-              } catch (Exception e) {
-                  System.out.println("Error al buscar libro ");
+             if("1".equals(opcion)) {
+                 System.out.println("Ingrese el titulo del libro: ");
+                 String titulo = sc.nextLine().toUpperCase().replace(" ", "%20");
+                 try {
+                     serviciosApiG serv = new serviciosApiG();
+                     datosApi da = serv.buscarLibApi(titulo);
+
+                     if (da.resultados() != null && !da.resultados().isEmpty()) {
+                         String tituloLibroapi = da.resultados().get(0).titulo();
+                         String autor = da.resultados().get(0).autor().get(0).nombre();
+                         Integer añoNac = da.resultados().get(0).autor().get(0).año_nacimiento();
+                         Integer añoFall = da.resultados().get(0).autor().get(0).año_fallecimiento();
+                         String idioma = da.resultados().get(0).idiomas().get(0);
+                         float numeroDescargas = da.resultados().get(0).numero_descargas();
+                         if (libroRepo.existsByTitulo(tituloLibroapi)) {
+
+                             System.out.println("El libro ya existe");
+
+                         }
+                         else {
+                               autoresBd autorBd = autorRepo.findByNombre_autor(autor);
+                               if (autorBd==null) {
+                                   autorBd = new autoresBd(autor, añoNac, añoFall);
+                                   autorRepo.save(autorBd);
+                                   System.out.println("autor guardado");
+                               }
+                               LibrosBd librosBd = new LibrosBd(tituloLibroapi, autor, idioma, numeroDescargas);
+                               librosBd.setAutor_libro(autorBd);
+                               libroRepo.save(librosBd);
+                               System.out.println("El autor " + autor + " ya existe");
+                               System.out.println("Libro guardado");
+                               System.out.println("titulo: " + tituloLibroapi + "; autor: " + autor +
+                                     "; idioma: " + idioma + "; numero de descargas: " + numeroDescargas);
+                         }
+                     }
+                     else {
+                         System.out.println("No se encontraron resultados");
+                     }
+                 }
+                 catch (Exception e) {
+                     System.out.println("Error al buscar libro ");
+                 }
+             }
+              else{
+                 System.out.println("opcion invalidad");
               }
           }
           else {
@@ -156,22 +161,27 @@ public class Menu {
                     "s: volver menu principal                ");
             String opcion=sc.nextLine();
             if(!"s".equals(opcion)) {
-                System.out.println("ingrese el año: ");
-                String op=sc.nextLine();
-                Integer año = Integer.valueOf(op);
-                boolean b = true;
-                List<autoresBd> autoresBd = autorRepo.findbyAño(año);
-                if (!autoresBd.isEmpty()) {
-                    for (autoresBd autor : autoresBd) {
-                        if (b) {
-                            System.out.println("Libros Registrados por Autores vivos en un determinado año: \t");
-                            b = false;
-                        }
-                        System.out.printf("%s\n", autor.getNombre_autor());
-                    }
-                } else {
-                    System.out.println("Año sin resultados");
-                }
+               if("1".equals(opcion)) {
+                   System.out.println("ingrese el año: ");
+                   String op = sc.nextLine();
+                   Integer año = Integer.valueOf(op);
+                   boolean b = true;
+                   List<autoresBd> autoresBd = autorRepo.findbyAño(año);
+                   if (!autoresBd.isEmpty()) {
+                       for (autoresBd autor : autoresBd) {
+                           if (b) {
+                               System.out.println("Libros Registrados por Autores vivos en un determinado año: \t");
+                               b = false;
+                           }
+                           System.out.printf("%s\n", autor.getNombre_autor());
+                       }
+                   } else {
+                       System.out.println("Año sin resultados");
+                   }
+               }
+               else{
+                   System.out.println("opcion invalidad");
+               }
             }
             else {
                 salir=true;
@@ -188,18 +198,23 @@ public class Menu {
                     "s : volver menu principal");
             String opcion = sc.nextLine();
             if(!"s".equals(opcion)) {
-                List<LibrosBd> librosBd = libroRepo.findByIdioma(opcion);
-                boolean b = true;
-                if (!librosBd.isEmpty()) {
-                    for (LibrosBd libro : librosBd) {
-                        if (b) {
-                            System.out.println("Listado de libros por idioma: \t");
-                            b = false;
+                if("en".equals(opcion) || "fr".equals(opcion) || "es".equals(opcion)) {
+                    List<LibrosBd> librosBd = libroRepo.findByIdioma(opcion);
+                    boolean b = true;
+                    if (!librosBd.isEmpty()) {
+                        for (LibrosBd libro : librosBd) {
+                            if (b) {
+                                System.out.println("Listado de libros por idioma: \t");
+                                b = false;
+                            }
+                            System.out.println("Titulo: " + libro.getTitulo() + "      Idioma:" + libro.getIdioma());
                         }
-                        System.out.println("Titulo: " + libro.getTitulo() + "      Idioma:" + libro.getIdioma());
+                    } else {
+                        System.out.println("Idioma no disponible");
                     }
-                } else {
-                    System.out.println("Idioma no disponible");
+                }
+                else{
+                    System.out.println("opcion invalidad");
                 }
             }
             else{
@@ -218,31 +233,36 @@ public class Menu {
         boolean salir = false;
         while(!salir) {
             System.out.println("Elige una opción:            \n" +
-                    "1: ingresar el nombre del autor          \n" +
-                    "s: volver menu principal                ");
+                    "1: ingresar autor         \n" +
+                    "s: volver al menú principal               ");
             String opcion = sc.nextLine();
             if (!"s".equals(opcion)) {
-                System.out.println("ingrese el nombre del autor: ");
-                String nombre=sc.nextLine();
-                List<autoresBd> autores = autorRepo.findByNombre_autor(nombre);
-                if (!autores.isEmpty()) {
-                    for (autoresBd autor : autores) {
+                if ("1".equals(opcion)) {
+                    System.out.println("Ingrese el apellido del autor: ");
+                    String apellido = sc.nextLine();
+                    System.out.println("Ingrese el nombre del autor: ");
+                    String nombre = sc.nextLine();
+                    String nombre_autor = apellido + ", " + nombre;
+                    Optional<autoresBd> autorOptional = autorRepo.findByNombre_autorContainingIgnoreCase(nombre_autor);
+                    if (autorOptional.isPresent()) {
+                        autoresBd autor = autorOptional.get();
                         List<LibrosBd> libros = autor.getLibros();
                         if (!libros.isEmpty()) {
-                            System.out.println("Libros del autor " + autor.getNombre_autor() + ":");
                             for (LibrosBd libro : libros) {
                                 System.out.println(libro.getTitulo());
                             }
+                        } else {
+                            System.out.println("Este autor no tiene libros registrados.");
                         }
-                        else {
-                            System.out.println("No se encontraron libros del autor " + opcion);
-                        }
+                    } else {
+                        System.out.println("No se encontraron autores con el nombre " + nombre_autor);
                     }
                 }
-                else {
-                    System.out.println("No se encontraron autores con el nombre " + opcion);
+                else{
+                    System.out.println("opcion invalidad");
                 }
-            } else {
+            }
+            else {
                 salir = true;
             }
         }
@@ -264,17 +284,20 @@ public class Menu {
                                           .averagingDouble(LibrosBd::getNumero_descarga));
                         System.out.println("Promedio de libros descargados: " + promedio);
                     }
-                    if("2".equals(opcion)){
+                    else if("2".equals(opcion)){
                         Optional<LibrosBd> libroMenosLeido = libroBd.stream()
                                 .filter(libro -> libro.getNumero_descarga() != 0.0)
                                 .max(Comparator.comparingDouble(LibrosBd::getNumero_descarga));
                             System.out.println("El libro mas leído es: " + libroMenosLeido.get().getTitulo());
                     }
-                    if("3".equals(opcion)){
+                    else if("3".equals(opcion)){
                         Optional<LibrosBd> libroMenosLeido = libroBd.stream()
                                 .filter(libro -> libro.getNumero_descarga() != 0.0)
                                 .min(Comparator.comparingDouble(LibrosBd::getNumero_descarga));
                         System.out.println("El libro menos leído es: " + libroMenosLeido.get().getTitulo());
+                    }
+                    else{
+                        System.out.println("opcion invalidad");
                     }
                 }
                 else{
