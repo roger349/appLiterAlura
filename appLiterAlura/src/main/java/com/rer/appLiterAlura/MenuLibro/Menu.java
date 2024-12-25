@@ -21,16 +21,16 @@ public class Menu {
     public void menuOpciones() {
         boolean salir = false;
         while(!salir){
-                        System.out.println("=========" +         "\n" +
-                        "Elige una opción:                        \n" +
-                        "1:  Buscar libro por titulo              \n" +
-                        "2:  Listar libros registrados            \n" +
-                        "3:  Listar autores registrados           \n" +
-                        "4:  Listar autores vivos por año         \n" +
-                        "5:  Listar libros por idioma             \n" +
-                        "6:  Listar top 10 libros mas descargados \n" +
-                        "7:  Listar libros por nombre de autor    \n" +
-                        "8:  otras consultas                      \n" +
+                        System.out.println("=========" +               "\n" +
+                        "Elige una opción:                              \n" +
+                        "1:  Buscar libro por titulo                    \n" +
+                        "2:  Listar libros registrados                  \n" +
+                        "3:  Listar autores registrados                 \n" +
+                        "4:  Listar autores vivos en un determinado año \n" +
+                        "5:  Listar libros por idioma                   \n" +
+                        "6:  Listar top 10 libros mas descargados       \n" +
+                        "7:  Listar libros por nombre de autor          \n" +
+                        "8:  otras consultas                            \n" +
                         "0.- Salir\n=========");
 
                 int opcion= Integer.parseInt(sc.nextLine());
@@ -92,10 +92,9 @@ public class Menu {
                          Integer añoFall = da.resultados().get(0).autor().get(0).año_fallecimiento();
                          String idioma = da.resultados().get(0).idiomas().get(0);
                          float numeroDescargas = da.resultados().get(0).numero_descargas();
+
                          if (libroRepo.existsByTitulo(tituloLibroapi)) {
-
                              System.out.println("El libro ya existe");
-
                          }
                          else {
                                autoresBd autorBd = autorRepo.findByNombre_autor(autor);
@@ -104,13 +103,16 @@ public class Menu {
                                    autorRepo.save(autorBd);
                                    System.out.println("autor guardado");
                                }
-                               LibrosBd librosBd = new LibrosBd(tituloLibroapi, autor, idioma, numeroDescargas);
-                               librosBd.setAutor_libro(autorBd);
-                               libroRepo.save(librosBd);
-                               System.out.println("El autor " + autor + " ya existe");
-                               System.out.println("Libro guardado");
-                               System.out.println("titulo: " + tituloLibroapi + "; autor: " + autor +
-                                     "; idioma: " + idioma + "; numero de descargas: " + numeroDescargas);
+                               else {
+                                   System.out.println("El autor " + autor + " ya existe");
+                               }
+
+                          LibrosBd librosBd = new LibrosBd(tituloLibroapi, autor, idioma, numeroDescargas);
+                          librosBd.setAutor_libro(autorBd);
+                          libroRepo.save(librosBd);
+                          System.out.println("Libro guardado");
+                          System.out.println("titulo: " + tituloLibroapi + "; autor: " + autor +
+                                             "; idioma: " + idioma + "; numero de descargas: " + numeroDescargas);
                          }
                      }
                      else {
@@ -170,10 +172,10 @@ public class Menu {
                    if (!autoresBd.isEmpty()) {
                        for (autoresBd autor : autoresBd) {
                            if (b) {
-                               System.out.println("Libros Registrados por Autores vivos en un determinado año: \t");
+                               System.out.println("Autores vivos en el año " + año + ": ");
                                b = false;
                            }
-                           System.out.printf("%s\n", autor.getNombre_autor());
+                           System.out.println( "   "  +  autor.getNombre_autor());
                        }
                    } else {
                        System.out.println("Año sin resultados");
