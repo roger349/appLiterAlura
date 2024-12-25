@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.rer.appLiterAlura.Model.Idioma.getIdiomaPorCodigo;
+
 @Component
 public class Menu {
     Scanner sc = new Scanner(System.in);
@@ -21,8 +23,9 @@ public class Menu {
     public void menuOpciones() {
         boolean salir = false;
         while(!salir){
-                        System.out.println("=========" +               "\n" +
-                        "Elige una opción:                              \n" +
+            try {
+                System.out.println("=========" + "\n" +
+                        "opciónes:                                      \n" +
                         "1:  Buscar libro por titulo                    \n" +
                         "2:  Listar libros registrados                  \n" +
                         "3:  Listar autores registrados                 \n" +
@@ -33,8 +36,9 @@ public class Menu {
                         "8:  otras consultas                            \n" +
                         "0.- Salir\n=========");
 
-                int opcion= Integer.parseInt(sc.nextLine());
-                switch(opcion){
+                 System.out.print("Ingrese una opción: ");
+                 int opcion = Integer.parseInt(sc.nextLine());
+                 switch (opcion) {
                     case 1:
                         buscarLibro();
                         break;
@@ -66,6 +70,9 @@ public class Menu {
                         System.out.println("Número Invalido");
                         break;
                 }
+            } catch (NumberFormatException e) {
+                System.out.println("ingrese una opcion validad ");
+            }
         }
     }
     public void buscarLibro() {
@@ -137,22 +144,21 @@ public class Menu {
             List<LibrosBd> librosBd = libroRepo.findAllLibros();
             for (LibrosBd libro : librosBd) {
                 if(b){
-                    System.out.println("Libros Registrados por Titulo: \t");
+                    System.out.println("Libros Registrados por Titulo: ");
                     b=false;
                 }
-                int nd= (int) libro.getNumero_descarga();
-                System.out.printf("%s\n",libro.getTitulo());
-        }
+                System.out.println( "  " + libro.getTitulo());
+            }
     }
     public void listarAutores() {
         boolean b=true;
         List<autoresBd> autoresBd = autorRepo.findAllAutores();
         for (autoresBd autor : autoresBd) {
             if(b){
-                System.out.println("Libros Registrados por Autor: \t");
+                System.out.println("Libros Registrados por Autor: ");
                 b=false;
             }
-            System.out.printf("%s\n",autor.getNombre_autor());
+            System.out.println( "  " + autor.getNombre_autor());
         }
     }
     public void listarAutoresVivos() {
@@ -202,17 +208,21 @@ public class Menu {
             if(!"s".equals(opcion)) {
                 if("en".equals(opcion) || "fr".equals(opcion) || "es".equals(opcion)) {
                     List<LibrosBd> librosBd = libroRepo.findByIdioma(opcion);
+                    String idioma= String.valueOf(getIdiomaPorCodigo(opcion));
                     boolean b = true;
                     if (!librosBd.isEmpty()) {
                         for (LibrosBd libro : librosBd) {
                             if (b) {
-                                System.out.println("Listado de libros por idioma: \t");
+                                System.out.println("Listado de libros en idioma " + idioma + " :");
                                 b = false;
                             }
-                            System.out.println("Titulo: " + libro.getTitulo() + "      Idioma:" + libro.getIdioma());
+                            System.out.println("    " + libro.getTitulo());
                         }
+                        long cantidadLibros = librosBd.stream()
+                                .filter(libro -> libro.getIdioma().equals(opcion)).count();
+                        System.out.println("Cantidad de libros en idioma " + idioma + " : " + cantidadLibros);
                     } else {
-                        System.out.println("Idioma no disponible");
+                        System.out.println("Idioma " + idioma + " no disponible");
                     }
                 }
                 else{
@@ -249,9 +259,14 @@ public class Menu {
                     if (autorOptional.isPresent()) {
                         autoresBd autor = autorOptional.get();
                         List<LibrosBd> libros = autor.getLibros();
+                        boolean b=true;
                         if (!libros.isEmpty()) {
+                            if(b){
+                                System.out.println("Libros escritos por el autor " + nombre_autor +": ");
+                                b=false;
+                            }
                             for (LibrosBd libro : libros) {
-                                System.out.println(libro.getTitulo());
+                                System.out.println( "  " + libro.getTitulo());
                             }
                         } else {
                             System.out.println("Este autor no tiene libros registrados.");
@@ -284,7 +299,7 @@ public class Menu {
                     if("1".equals(opcion)){
                         Double promedio = libroBd.stream().collect(Collectors
                                           .averagingDouble(LibrosBd::getNumero_descarga));
-                        System.out.println("Promedio de libros descargados: " + promedio);
+                        System.out.println("Promedio de descarga de los libros buscados: " + promedio);
                     }
                     else if("2".equals(opcion)){
                         Optional<LibrosBd> libroMenosLeido = libroBd.stream()

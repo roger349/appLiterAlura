@@ -20,7 +20,7 @@ public class LibrosBd {
     public String idioma;
     @Column(name = "numero_descarga", nullable = false)
     public float numero_descarga;
-    @ManyToOne//(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name="autor_libro_id")
     public autoresBd autor_libro;
 
