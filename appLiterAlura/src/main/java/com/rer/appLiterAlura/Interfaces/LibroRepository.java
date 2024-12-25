@@ -12,9 +12,9 @@ import java.util.List;
 public interface LibroRepository extends JpaRepository<LibrosBd, Integer> {
     @Query("select exists (select 1 from LibrosBd where titulo = :titulo)")
     boolean existsByTitulo(String titulo);
-    @Query("select a from LibrosBd a")
+    @Query("select l from LibrosBd l")
     List<LibrosBd> findAllLibros();
-    @Query("select i from LibrosBd i where i.idioma = :idioma")
+    @Query("select l from LibrosBd l where l.idioma = :idioma")
     List<LibrosBd> findByIdioma(String idioma);
 }
 

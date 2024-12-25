@@ -235,11 +235,17 @@ public class Menu {
         }
     }
     public void listarTop10(){
+        boolean[] b = new boolean[]{true};
         List<LibrosBd> librosBd=libroRepo.findAllLibros();
         librosBd.stream().sorted(Comparator.comparing(LibrosBd::getNumero_descarga).reversed()).limit(10)
-                .forEach(libro -> System.out.println("Título: " + libro.getTitulo() + ", Descargas: "
-                        + libro.getNumero_descarga()));
-
+                .forEach(libro ->{
+                            if (b[0]) {
+                                System.out.println("listado de los 10 libros mas descargados: ");
+                                b[0] = false;
+                            }
+                        System.out.println("  " + libro.getTitulo() + ", Descargas: "
+                        + libro.getNumero_descarga());}
+                );
     }
     public void listarLibrosPorNombreAutor(){
         boolean salir = false;
